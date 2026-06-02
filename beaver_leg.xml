@@ -1,0 +1,151 @@
+<mujoco model="lower_right_leg">
+<option timestep="0.005"/>
+
+<asset>
+  <texture name="body" type="cube" builtin="flat" mark="cross"
+           width="128" height="128"
+           rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1"/>
+  <material name="body" texture="body" texuniform="true" rgba="0.8 0.6 .4 1"/>
+
+  <!-- Black material for shin2, ankle, foot -->
+  <texture name="dark" type="cube" builtin="flat"
+           width="128" height="128"
+           rgb1="0.1 0.1 0.1" rgb2="0.1 0.1 0.1"/>
+  <material name="dark" texture="dark" texuniform="true" rgba="0.1 0.1 0.1 1"/>
+
+  <texture name="grid" type="2d" builtin="checker"
+           width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+  <material name="grid" texture="grid" texrepeat="1 1"
+            texuniform="true" reflectance=".2"/>
+</asset>
+
+<default>
+  <motor ctrlrange="-1 1" ctrllimited="true"/>
+
+  <default class="body">
+    <geom type="capsule" condim="1" friction=".7"
+          solimp=".9 .99 .003" solref=".015 1" material="body" group="1"/>
+    <joint type="hinge" damping=".2" stiffness="1" armature=".01"
+           limited="true" solimplimit="0 .99 .01"/>
+
+    <default class="thigh">
+      <geom fromto="0 0 0  0 0 -.3" size=".055"/>
+    </default>
+
+    <!-- shin1: skin-coloured upper shin -->
+    <default class="shin1">
+      <geom fromto="0 0 0  0 0 -.4" size=".049"/>
+    </default>
+
+    <!-- shin2: black lower shin -->
+    <default class="shin2">
+      <geom fromto="0 0 0  0 0 -.15" size=".049" material="dark"/>
+    </default>
+
+    <default class="hip">
+      <joint pos="0 0 0" axis="0 1 0" range="-60 90"
+             damping=".3" stiffness="2"/>
+    </default>
+
+    <default class="knee">
+      <joint pos="0 0 .02" axis="0 1 0" range="-160 2"/>
+    </default>
+
+    <!-- Mid-shin joint connecting shin1 to shin2 -->
+    <default class="mid_shin">
+      <joint pos="0 0 0" axis="0 1 0" range="-30 30"
+             damping=".2" stiffness="2"/>
+    </default>
+
+    <default class="ankle">
+      <joint range="-90 90"/>
+      <default class="ankle_y">
+        <joint pos="0 0 .08" axis="0 1 0" stiffness="6"/>
+      </default>
+      <default class="ankle_x">
+        <joint pos="0 0 .04" stiffness="3"/>
+      </default>
+    </default>
+  </default>
+
+  <!-- Black foot capsules -->
+  <default class="foot1">
+    <geom type="capsule" size=".027" fromto="-.07 -.01 0  .14 -.1 0"
+          material="dark" condim="1" friction=".7"
+          solimp=".9 .99 .003" solref=".015 1" group="1"/>
+  </default>
+  <default class="foot2">
+    <geom type="capsule" size=".027" fromto="-.07 .00 0  .14 .00 0"
+          material="dark" condim="1" friction=".7"
+          solimp=".9 .99 .003" solref=".015 1" group="0"/>
+  </default>
+  <default class="foot3">
+    <geom type="capsule" size=".027" fromto="-.07 .01 0  .14 .1 0"
+          material="dark" condim="1" friction=".7"
+          solimp=".9 .99 .003" solref=".015 1" group="1"/>
+  </default>
+</default>
+
+<worldbody>
+  <geom name="floor" size="0 0 .05" type="plane" material="grid" condim="3"/>
+  <light name="top" pos="0 0 3" dir="0 0 -1" diffuse=".9 .9 .9"/>
+
+  <!--
+    Chain:
+    anchor → thigh_right (hip) → shin1_right (knee)
+           → shin2_right (mid_shin) → foot_right (ankle)
+    
+    Heights:
+    anchor    : 1.1 m
+    shin1     : 30cm below anchor (bottom of thigh)
+    shin2     : 40cm below shin1  (bottom of shin1)
+    foot      : 15cm below shin2  (bottom of shin2)
+    
+  Total leg length: 30 + 40 + 15 = 85cm
+  Foot clears floor at ~25cm with anchor at 1.1m
+-->
+  <body name="anchor" pos="0 0 1.1" childclass="body">
+
+    <body name="thigh_right" pos="0 .01 0">
+      <joint name="hip_right"   class="hip"/>
+      <geom  name="thigh_right" class="thigh"/>
+
+      <body name="shin1_right" pos="0 0 -.3">
+        <joint name="knee_right"  class="knee"/>
+        <geom  name="shin1_right" class="shin1"/>
+
+        <!-- Mid-shin: where skin colour changes to black -->
+        <body name="shin2_right" pos="0 0 -.4">
+          <joint name="mid_shin_right" class="mid_shin"/>
+          <geom  name="shin2_right"    class="shin2"/>
+
+          <body name="foot_right" pos="0 0 -.15">
+            <joint name="ankle_y_right" class="ankle_y"/>
+            <joint name="ankle_x_right" class="ankle_x" axis="1 0 .5"/>
+            <geom  name="foot1_right"   class="foot1"/>
+            <geom  name="foot2_right"   class="foot2"/>
+            <geom  name="foot3_right"   class="foot3"/>
+          </body><!-- end foot_right -->
+
+        </body><!-- end shin2_right -->
+      </body><!-- end shin1_right -->
+    </body><!-- end thigh_right -->
+
+  </body><!-- end anchor -->
+</worldbody>
+
+<actuator>
+  <!-- qpos / ctrl order: hip, knee, mid_shin, ankle_y, ankle_x -->
+  <motor name="hip_right"      gear="120" joint="hip_right"/>
+  <motor name="knee_right"     gear="80"  joint="knee_right"/>
+  <motor name="mid_shin_right" gear="40"  joint="mid_shin_right"/>
+  <motor name="ankle_y_right"  gear="20"  joint="ankle_y_right"/>
+  <motor name="ankle_x_right"  gear="20"  joint="ankle_x_right"/>
+</actuator>
+
+<keyframe>
+  <!-- qpos order: hip | knee | mid_shin | ankle_y | ankle_x -->
+  <key name="stand" qpos="0 0 0 0 0"/>
+</keyframe>
+
+</mujoco>
