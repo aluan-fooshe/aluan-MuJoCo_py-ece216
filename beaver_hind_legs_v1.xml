@@ -1,0 +1,183 @@
+<mujoco model="beaver_hind_legs_v1">
+  <!--
+    Beaver-like Underwater Robot — Hind Legs MuJoCo Model v3
+    FIX: Now uses MuJoCo standard Z-up convention.
+         gravity = 0 0 -9.81  (Z is up)
+         Legs extend downward along -Z axis.
+         Hip/knee joints rotate about Y axis (sagittal plane).
+
+    Dimensions from Table 1 (paper):
+      l1 = l2 = 0.100 m  (equal split of 200 mm hind limb)
+      l3 = 0.075 m        (web / foot length)
+      Total robot mass = 3.25 kg
+
+    Assumptions (not stated in paper):
+      l1 = l2 (equal split)
+      Hip lateral separation = 0.080 m (from Fig. 4a proportions)
+      Pelvis mass = 2.25 kg
+  -->
+
+  <compiler angle="degree"/>
+  <option gravity="0 0 -9.81" timestep="0.002"/>
+
+  <default>
+    <joint type="hinge" damping="0.5" armature="0.01" limited="true"/>
+    <geom type="capsule" density="1200"/>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="gradient"
+             rgb1="0.75 0.85 1.0" rgb2="0.3 0.4 0.6" width="256" height="256"/>
+    <texture name="checker" type="2d" builtin="checker"
+             rgb1="0.80 0.80 0.80" rgb2="0.60 0.60 0.60" width="256" height="256"/>
+    <material name="floor_mat"  texture="checker" texrepeat="8 8"/>
+    <material name="thigh_mat"  rgba="0.60 0.38 0.18 1"/>
+    <material name="calf_mat"   rgba="0.70 0.50 0.28 1"/>
+    <material name="web_mat"    rgba="0.12 0.12 0.12 1"/>
+  </asset>
+
+  <worldbody>
+
+    <light pos="0 -1 2" dir="0 0.5 -1" diffuse="0.9 0.9 0.9" specular="0.3 0.3 0.3"/>
+    <light pos="0  1 2" dir="0 -0.5 -1" diffuse="0.5 0.5 0.5"/>
+
+    <!-- Ground plane: Z=0 -->
+    <geom name="floor" type="plane" size="3 3 0.1"
+          material="floor_mat" contype="1" conaffinity="1"/>
+
+    <!-- ═══════════════════════════════════════════
+         PELVIS — raised so legs clear the ground.
+         l1 + l2 = 0.20 m, semi-crouched → ~0.26 m height
+         ═══════════════════════════════════════════ -->
+    <body name="pelvis" pos="0 0 0.26">
+      <freejoint name="pelvis_free"/>
+      <geom name="pelvis_geom" type="box"
+            size="0.090 0.095 0.040"
+            rgba="0.25 0.25 0.45 1" mass="2.25"/>
+      <site name="imu" pos="0 0 0" size="0.005"/>
+
+      <!-- ═══════════════════════════════════════
+           LEFT HIND LEG  (Y = +0.080 m lateral)
+           ═══════════════════════════════════════ -->
+      <body name="left_thigh" pos="0 0.080 0">
+
+        <!-- Hip rotates in sagittal plane → axis = Y -->
+        <joint name="left_hip" axis="0 1 0"
+               range="-70 100" damping="1.2"/>
+
+        <!-- l1 = 0.100 m downward (-Z) -->
+        <geom name="left_thigh_geom" type="capsule"
+              fromto="0 0 0   0 0 -0.100"
+              size="0.016" material="thigh_mat" mass="0.25"/>
+
+        <body name="left_calf" pos="0 0 -0.100">
+
+          <!-- Knee rotates in sagittal plane → axis = Y -->
+          <joint name="left_knee" axis="0 1 0"
+                 range="0 150" damping="0.8"/>
+
+          <!-- l2 = 0.100 m downward (-Z) -->
+          <geom name="left_calf_geom" type="capsule"
+                fromto="0 0 0   0 0 -0.100"
+                size="0.013" material="calf_mat" mass="0.20"/>
+
+          <body name="left_web" pos="0 0 -0.100">
+
+            <!-- Ankle: passive -->
+            <joint name="left_ankle" axis="0 1 0"
+                   range="-40 40" damping="0.3"/>
+
+            <!-- l3 = 0.075 m web, angled forward (+X) -->
+            <geom name="left_web_geom" type="capsule"
+                  fromto="0 0 0   0.053 0 -0.053"
+                  size="0.010" material="web_mat" mass="0.05"/>
+            <!-- Webbed foot pad -->
+            <geom name="left_web_pad" type="ellipsoid"
+                  pos="0.060 0 -0.040"
+                  size="0.038 0.022 0.010"
+                  rgba="0.10 0.10 0.10 0.9" mass="0.02"
+                  contype="1" conaffinity="1"/>
+
+          </body>
+        </body>
+      </body><!-- end left leg -->
+
+      <!-- ═══════════════════════════════════════
+           RIGHT HIND LEG  (Y = -0.080 m lateral)
+           ═══════════════════════════════════════ -->
+      <body name="right_thigh" pos="0 -0.080 0">
+
+        <joint name="right_hip" axis="0 1 0"
+               range="-70 100" damping="1.2"/>
+        <geom name="right_thigh_geom" type="capsule"
+              fromto="0 0 0   0 0 -0.100"
+              size="0.016" material="thigh_mat" mass="0.25"/>
+
+        <body name="right_calf" pos="0 0 -0.100">
+
+          <joint name="right_knee" axis="0 1 0"
+                 range="0 150" damping="0.8"/>
+          <geom name="right_calf_geom" type="capsule"
+                fromto="0 0 0   0 0 -0.100"
+                size="0.013" material="calf_mat" mass="0.20"/>
+
+          <body name="right_web" pos="0 0 -0.100">
+
+            <joint name="right_ankle" axis="0 1 0"
+                   range="-40 40" damping="0.3"/>
+            <geom name="right_web_geom" type="capsule"
+                  fromto="0 0 0   0.053 0 -0.053"
+                  size="0.010" material="web_mat" mass="0.05"/>
+            <geom name="right_web_pad" type="ellipsoid"
+                  pos="0.060 0 -0.040"
+                  size="0.038 0.022 0.010"
+                  rgba="0.10 0.10 0.10 0.9" mass="0.02"
+                  contype="1" conaffinity="1"/>
+
+          </body>
+        </body>
+      </body><!-- end right leg -->
+
+    </body><!-- end pelvis -->
+  </worldbody>
+
+  <!-- ═══════════════════════════
+       ACTUATORS
+       ═══════════════════════════ -->
+  <actuator>
+    <motor name="left_hip_act"   joint="left_hip"   gear="60"
+           ctrllimited="true" ctrlrange="-1 1"/>
+    <motor name="left_knee_act"  joint="left_knee"  gear="50"
+           ctrllimited="true" ctrlrange="-1 1"/>
+    <motor name="right_hip_act"  joint="right_hip"  gear="60"
+           ctrllimited="true" ctrlrange="-1 1"/>
+    <motor name="right_knee_act" joint="right_knee" gear="50"
+           ctrllimited="true" ctrlrange="-1 1"/>
+  </actuator>
+
+  <!-- ═══════════════════════════
+       SENSORS
+       ═══════════════════════════ -->
+  <sensor>
+    <jointpos name="s_lhip"    joint="left_hip"/>
+    <jointpos name="s_lknee"   joint="left_knee"/>
+    <jointpos name="s_lankle"  joint="left_ankle"/>
+    <jointpos name="s_rhip"    joint="right_hip"/>
+    <jointpos name="s_rknee"   joint="right_knee"/>
+    <jointpos name="s_rankle"  joint="right_ankle"/>
+    <accelerometer name="pelvis_acc" site="imu"/>
+  </sensor>
+
+  <!-- ═══════════════════════════════════════
+       KEYFRAME — neutral semi-crouched stance
+       freejoint qpos: x y z qw qx qy qz
+       then joint angles: lhip lknee lankle rhip rknee rankle
+       ═══════════════════════════════════════ -->
+  <keyframe>
+    <key name="neutral_crouch"
+         qpos="0 0 0.26   1 0 0 0
+               -35 70 0
+               -35 70 0"/>
+  </keyframe>
+
+</mujoco>

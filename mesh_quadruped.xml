@@ -1,0 +1,804 @@
+<mujoco model="mesh_quadruped">
+
+  <compiler angle="degree" inertiafromgeom="true"/>
+
+  <option gravity="0 0 -9.81" timestep="0.002"/>
+
+  <default>
+    <geom conaffinity="1" condim="3" contype="1" friction="1.5 0.005 0.0001"/>
+    <tendon limited="true" width="0.003" rgba="0.9 0.3 0.3 0.8"/>
+    <motor ctrllimited="true" ctrlrange="-1 1"/>
+  </default>
+
+  <asset>
+    <texture name="grid" type="2d" builtin="checker"
+             rgb1="0.15 0.15 0.15" rgb2="0.85 0.85 0.85"
+             width="300" height="300"/>
+    <material name="grid_mat" texture="grid" texrepeat="6 6" reflectance="0.2"/>
+  </asset>
+
+  <worldbody>
+
+    <!-- Ground -->
+    <geom type="plane" size="5 5 0.1" material="grid_mat"
+          friction="1.5 0.005 0.0001"/>
+    <light diffuse="0.8 0.8 0.8" pos="0 0 4" dir="0 0 -1" directional="true"/>
+    <light diffuse="0.4 0.4 0.5" pos="-2 2 3" dir="1 -1 -1"/>
+
+    <!-- Root body: quadruped mesh -->
+    <body name="quadruped" pos="0 0 0">
+      <freejoint name="root"/>
+
+      <!-- Mesh body geom (capsule at each vertex) -->
+      <geom name="v0" type="sphere" pos="-0.4480 -0.1417 1.7567"
+            size="0.018" rgba="0.50 0.45 0.70 0.9"/>
+      <geom name="v1" type="sphere" pos="-0.6681 -0.0925 1.6548"
+            size="0.018" rgba="0.51 0.45 0.69 0.9"/>
+      <geom name="v2" type="sphere" pos="-1.0049 -0.0171 1.6146"
+            size="0.018" rgba="0.54 0.45 0.66 0.9"/>
+      <geom name="v3" type="sphere" pos="-1.1930 0.0250 1.4781"
+            size="0.018" rgba="0.55 0.45 0.65 0.9"/>
+      <geom name="v4" type="sphere" pos="-1.2870 0.0460 1.2052"
+            size="0.018" rgba="0.56 0.45 0.64 0.9"/>
+      <geom name="v5" type="sphere" pos="-1.0770 -0.2078 0.7020"
+            size="0.018" rgba="0.48 0.45 0.72 0.9"/>
+      <geom name="v6" type="sphere" pos="1.0049 -0.4566 0.9839"
+            size="0.018" rgba="0.39 0.45 0.81 0.9"/>
+      <geom name="v7" type="sphere" pos="0.6768 -0.6140 0.0633"
+            size="0.018" rgba="0.34 0.45 0.86 0.9"/>
+      <geom name="v8" type="sphere" pos="1.0047 -0.4735 1.4377"
+            size="0.018" rgba="0.39 0.45 0.81 0.9"/>
+      <geom name="v9" type="sphere" pos="0.7656 -0.4610 0.6884"
+            size="0.018" rgba="0.39 0.45 0.81 0.9"/>
+      <geom name="v10" type="sphere" pos="0.5253 -0.3954 0.5876"
+            size="0.018" rgba="0.41 0.45 0.79 0.9"/>
+      <geom name="v11" type="sphere" pos="0.5763 -0.4993 0.3232"
+            size="0.018" rgba="0.38 0.45 0.82 0.9"/>
+      <geom name="v12" type="sphere" pos="0.4214 -0.5569 0.0369"
+            size="0.018" rgba="0.36 0.45 0.84 0.9"/>
+      <geom name="v13" type="sphere" pos="-1.1407 -0.4957 0.3569"
+            size="0.018" rgba="0.38 0.45 0.82 0.9"/>
+      <geom name="v14" type="sphere" pos="0.2318 -0.4240 0.3025"
+            size="0.018" rgba="0.40 0.45 0.80 0.9"/>
+      <geom name="v15" type="sphere" pos="0.0610 -0.2916 0.5295"
+            size="0.018" rgba="0.45 0.45 0.75 0.9"/>
+      <geom name="v16" type="sphere" pos="-0.6851 -0.6166 0.4872"
+            size="0.018" rgba="0.34 0.45 0.86 0.9"/>
+      <geom name="v17" type="sphere" pos="-0.8376 -0.6230 0.2919"
+            size="0.018" rgba="0.34 0.45 0.86 0.9"/>
+      <geom name="v18" type="sphere" pos="-0.8239 -0.7290 0.0301"
+            size="0.018" rgba="0.30 0.45 0.90 0.9"/>
+      <geom name="v19" type="sphere" pos="-1.0201 -0.6851 0.0348"
+            size="0.018" rgba="0.31 0.45 0.89 0.9"/>
+      <geom name="v20" type="sphere" pos="0.4869 -0.3509 1.4118"
+            size="0.018" rgba="0.43 0.45 0.77 0.9"/>
+      <geom name="v21" type="sphere" pos="0.0553 -0.2809 0.9745"
+            size="0.018" rgba="0.45 0.45 0.75 0.9"/>
+      <geom name="v22" type="sphere" pos="-0.3051 -0.1560 1.1404"
+            size="0.018" rgba="0.49 0.45 0.71 0.9"/>
+      <geom name="v23" type="sphere" pos="0.6429 -0.2941 1.7712"
+            size="0.018" rgba="0.45 0.45 0.75 0.9"/>
+      <geom name="v24" type="sphere" pos="0.0119 -0.2446 1.5870"
+            size="0.018" rgba="0.46 0.45 0.74 0.9"/>
+      <geom name="v25" type="sphere" pos="0.0520 -0.2315 1.9239"
+            size="0.018" rgba="0.47 0.45 0.73 0.9"/>
+      <geom name="v26" type="sphere" pos="-0.7447 -0.0694 1.1760"
+            size="0.018" rgba="0.52 0.45 0.68 0.9"/>
+      <geom name="v27" type="sphere" pos="0.6811 0.3082 1.5169"
+            size="0.018" rgba="0.65 0.45 0.55 0.9"/>
+      <geom name="v28" type="sphere" pos="0.4130 0.4280 1.6126"
+            size="0.018" rgba="0.69 0.45 0.51 0.9"/>
+      <geom name="v29" type="sphere" pos="0.0613 0.5575 1.6552"
+            size="0.018" rgba="0.73 0.45 0.47 0.9"/>
+      <geom name="v30" type="sphere" pos="0.8321 0.2787 1.0839"
+            size="0.018" rgba="0.64 0.45 0.56 0.9"/>
+      <geom name="v31" type="sphere" pos="0.8899 0.2542 1.3166"
+            size="0.018" rgba="0.63 0.45 0.57 0.9"/>
+      <geom name="v32" type="sphere" pos="0.5342 0.3108 0.7906"
+            size="0.018" rgba="0.65 0.45 0.55 0.9"/>
+      <geom name="v33" type="sphere" pos="0.1898 0.4473 0.7166"
+            size="0.018" rgba="0.70 0.45 0.50 0.9"/>
+      <geom name="v34" type="sphere" pos="1.2144 0.1981 0.2862"
+            size="0.018" rgba="0.61 0.45 0.59 0.9"/>
+      <geom name="v35" type="sphere" pos="0.9399 0.2842 0.2137"
+            size="0.018" rgba="0.64 0.45 0.56 0.9"/>
+      <geom name="v36" type="sphere" pos="0.7486 0.3096 0.4684"
+            size="0.018" rgba="0.65 0.45 0.55 0.9"/>
+      <geom name="v37" type="sphere" pos="1.0518 0.2327 0.5678"
+            size="0.018" rgba="0.62 0.45 0.58 0.9"/>
+      <geom name="v38" type="sphere" pos="-0.3078 0.6402 1.4938"
+            size="0.018" rgba="0.76 0.45 0.44 0.9"/>
+      <geom name="v39" type="sphere" pos="-0.6532 0.7516 1.2645"
+            size="0.018" rgba="0.80 0.45 0.40 0.9"/>
+      <geom name="v40" type="sphere" pos="0.0291 0.5442 0.7106"
+            size="0.018" rgba="0.73 0.45 0.47 0.9"/>
+      <geom name="v41" type="sphere" pos="-0.6620 0.7266 0.8731"
+            size="0.018" rgba="0.79 0.45 0.41 0.9"/>
+      <geom name="v42" type="sphere" pos="-0.1351 0.5839 0.2812"
+            size="0.018" rgba="0.74 0.45 0.46 0.9"/>
+      <geom name="v43" type="sphere" pos="-0.4660 0.6749 0.3167"
+            size="0.018" rgba="0.77 0.45 0.43 0.9"/>
+      <geom name="v44" type="sphere" pos="-0.1213 0.5784 0.0328"
+            size="0.018" rgba="0.74 0.45 0.46 0.9"/>
+      <geom name="v45" type="sphere" pos="-0.3423 0.6422 0.0200"
+            size="0.018" rgba="0.76 0.45 0.44 0.9"/>
+      <geom name="v46" type="sphere" pos="-0.4299 -0.2475 0.6016"
+            size="0.018" rgba="0.46 0.45 0.74 0.9"/>
+      <geom name="v47" type="sphere" pos="-0.9218 -0.4801 0.6151"
+            size="0.018" rgba="0.38 0.45 0.82 0.9"/>
+      <geom name="v48" type="sphere" pos="-0.9247 -0.0320 0.9203"
+            size="0.018" rgba="0.54 0.45 0.66 0.9"/>
+      <geom name="v49" type="sphere" pos="-0.9437 -0.5906 0.3226"
+            size="0.018" rgba="0.35 0.45 0.85 0.9"/>
+      <geom name="v50" type="sphere" pos="-0.7187 -0.2993 0.7539"
+            size="0.018" rgba="0.45 0.45 0.75 0.9"/>
+      <geom name="v51" type="sphere" pos="-0.1523 -0.2351 0.5425"
+            size="0.018" rgba="0.47 0.45 0.73 0.9"/>
+      <geom name="v52" type="sphere" pos="0.3922 -0.4564 0.2607"
+            size="0.018" rgba="0.39 0.45 0.81 0.9"/>
+      <geom name="v53" type="sphere" pos="0.4441 -0.4351 0.4109"
+            size="0.018" rgba="0.40 0.45 0.80 0.9"/>
+      <geom name="v54" type="sphere" pos="-0.2412 0.6246 0.3199"
+            size="0.018" rgba="0.76 0.45 0.44 0.9"/>
+      <geom name="v55" type="sphere" pos="-0.3576 0.6463 0.8016"
+            size="0.018" rgba="0.76 0.45 0.44 0.9"/>
+      <geom name="v56" type="sphere" pos="0.9080 0.2762 0.4239"
+            size="0.018" rgba="0.64 0.45 0.56 0.9"/>
+      <geom name="v57" type="sphere" pos="0.9084 0.2354 0.6416"
+            size="0.018" rgba="0.63 0.45 0.57 0.9"/>
+      <geom name="v58" type="sphere" pos="0.9254 0.2610 0.8806"
+            size="0.018" rgba="0.63 0.45 0.57 0.9"/>
+      <geom name="v59" type="sphere" pos="0.0448 0.5507 1.1702"
+            size="0.018" rgba="0.73 0.45 0.47 0.9"/>
+      <geom name="v60" type="sphere" pos="0.3700 0.3775 0.7457"
+            size="0.018" rgba="0.67 0.45 0.53 0.9"/>
+      <geom name="v61" type="sphere" pos="0.5179 0.3900 1.1512"
+            size="0.018" rgba="0.68 0.45 0.52 0.9"/>
+
+      <!-- Mesh edges -->
+      <geom type="capsule" fromto="0.0610 -0.2916 0.5295 0.0553 -0.2809 0.9745"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.1213 0.5784 0.0328 -0.3423 0.6422 0.0200"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.0049 -0.0171 1.6146 -0.6532 0.7516 1.2645"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6851 -0.6166 0.4872 -0.9218 -0.4801 0.6151"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.3051 -0.1560 1.1404 -0.7447 -0.0694 1.1760"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.6429 -0.2941 1.7712 0.0520 -0.2315 1.9239"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.2144 0.1981 0.2862 1.0518 0.2327 0.5678"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.4130 0.4280 1.6126 0.8321 0.2787 1.0839"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0613 0.5575 1.6552 0.0448 0.5507 1.1702"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0291 0.5442 0.7106 0.0448 0.5507 1.1702"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.4214 -0.5569 0.0369 0.3922 -0.4564 0.2607"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.2870 0.0460 1.2052 -0.9247 -0.0320 0.9203"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0049 -0.4566 0.9839 0.4869 -0.3509 1.4118"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.8239 -0.7290 0.0301 -1.0201 -0.6851 0.0348"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6620 0.7266 0.8731 -0.1523 -0.2351 0.5425"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5763 -0.4993 0.3232 0.4441 -0.4351 0.4109"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6851 -0.6166 0.4872 -0.9437 -0.5906 0.3226"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4299 -0.2475 0.6016 -0.7187 -0.2993 0.7539"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.2318 -0.4240 0.3025 0.0610 -0.2916 0.5295"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.7656 -0.4610 0.6884 0.5253 -0.3954 0.5876"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5342 0.3108 0.7906 0.3700 0.3775 0.7457"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.6429 -0.2941 1.7712 0.6811 0.3082 1.5169"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0610 -0.2916 0.5295 0.4441 -0.4351 0.4109"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.3078 0.6402 1.4938 -0.3576 0.6463 0.8016"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.3051 -0.1560 1.1404 -0.4299 -0.2475 0.6016"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.1407 -0.4957 0.3569 -1.0201 -0.6851 0.0348"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.6768 -0.6140 0.0633 0.4214 -0.5569 0.0369"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6681 -0.0925 1.6548 -0.7447 -0.0694 1.1760"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.7486 0.3096 0.4684 0.9084 0.2354 0.6416"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.9399 0.2842 0.2137 1.0518 0.2327 0.5678"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.1898 0.4473 0.7166 0.0291 0.5442 0.7106"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.4869 -0.3509 1.4118 0.0119 -0.2446 1.5870"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.3078 0.6402 1.4938 -0.6532 0.7516 1.2645"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.6429 -0.2941 1.7712 0.0613 0.5575 1.6552"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.1930 0.0250 1.4781 -0.7447 -0.0694 1.1760"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.7656 -0.4610 0.6884 0.0553 -0.2809 0.9745"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0610 -0.2916 0.5295 -0.3576 0.6463 0.8016"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0291 0.5442 0.7106 -0.2412 0.6246 0.3199"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6851 -0.6166 0.4872 -0.8376 -0.6230 0.2919"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.9218 -0.4801 0.6151 -0.7187 -0.2993 0.7539"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0520 -0.2315 1.9239 0.0613 0.5575 1.6552"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.1351 0.5839 0.2812 -0.3423 0.6422 0.0200"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0448 0.5507 1.1702 0.5179 0.3900 1.1512"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0518 0.2327 0.5678 0.9254 0.2610 0.8806"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.1351 0.5839 0.2812 -0.2412 0.6246 0.3199"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.8321 0.2787 1.0839 0.5179 0.3900 1.1512"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.3078 0.6402 1.4938 -0.6620 0.7266 0.8731"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0613 0.5575 1.6552 -0.3078 0.6402 1.4938"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4660 0.6749 0.3167 -0.3576 0.6463 0.8016"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.7447 -0.0694 1.1760 -0.9247 -0.0320 0.9203"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.3078 0.6402 1.4938 0.0448 0.5507 1.1702"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5253 -0.3954 0.5876 0.0610 -0.2916 0.5295"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.6811 0.3082 1.5169 0.8899 0.2542 1.3166"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0047 -0.4735 1.4377 0.6811 0.3082 1.5169"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5253 -0.3954 0.5876 0.1898 0.4473 0.7166"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.0049 -0.0171 1.6146 -0.3078 0.6402 1.4938"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6532 0.7516 1.2645 -0.6620 0.7266 0.8731"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.6429 -0.2941 1.7712 0.0119 -0.2446 1.5870"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5342 0.3108 0.7906 0.9084 0.2354 0.6416"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.7447 -0.0694 1.1760 -0.7187 -0.2993 0.7539"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0047 -0.4735 1.4377 0.4869 -0.3509 1.4118"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0119 -0.2446 1.5870 0.0520 -0.2315 1.9239"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4480 -0.1417 1.7567 0.0520 -0.2315 1.9239"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.9080 0.2762 0.4239 0.9084 0.2354 0.6416"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.0770 -0.2078 0.7020 -0.9247 -0.0320 0.9203"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.4130 0.4280 1.6126 0.0448 0.5507 1.1702"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.4869 -0.3509 1.4118 0.0553 -0.2809 0.9745"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5763 -0.4993 0.3232 0.3922 -0.4564 0.2607"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.3922 -0.4564 0.2607 0.4441 -0.4351 0.4109"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0049 -0.4566 0.9839 0.8899 0.2542 1.3166"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0291 0.5442 0.7106 -0.1351 0.5839 0.2812"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.9084 0.2354 0.6416 0.9254 0.2610 0.8806"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0047 -0.4735 1.4377 0.8899 0.2542 1.3166"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.8321 0.2787 1.0839 0.8899 0.2542 1.3166"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.6768 -0.6140 0.0633 0.5763 -0.4993 0.3232"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.7486 0.3096 0.4684 0.9080 0.2762 0.4239"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.2318 -0.4240 0.3025 0.4441 -0.4351 0.4109"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.0770 -0.2078 0.7020 -0.7187 -0.2993 0.7539"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.0201 -0.6851 0.0348 -0.9437 -0.5906 0.3226"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.4130 0.4280 1.6126 0.5179 0.3900 1.1512"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.8321 0.2787 1.0839 0.9254 0.2610 0.8806"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.4869 -0.3509 1.4118 0.6429 -0.2941 1.7712"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6620 0.7266 0.8731 -0.4299 -0.2475 0.6016"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0553 -0.2809 0.9745 -0.3051 -0.1560 1.1404"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6620 0.7266 0.8731 -0.3576 0.6463 0.8016"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4299 -0.2475 0.6016 -0.1523 -0.2351 0.5425"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.0770 -0.2078 0.7020 -1.1407 -0.4957 0.3569"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.6429 -0.2941 1.7712 0.4130 0.4280 1.6126"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5342 0.3108 0.7906 0.5179 0.3900 1.1512"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.1898 0.4473 0.7166 0.3700 0.3775 0.7457"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.8376 -0.6230 0.2919 -0.8239 -0.7290 0.0301"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.6811 0.3082 1.5169 0.4130 0.4280 1.6126"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5253 -0.3954 0.5876 0.0553 -0.2809 0.9745"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.2412 0.6246 0.3199 -0.3576 0.6463 0.8016"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.9218 -0.4801 0.6151 -0.9437 -0.5906 0.3226"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.7656 -0.4610 0.6884 0.5342 0.3108 0.7906"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4480 -0.1417 1.7567 0.0613 0.5575 1.6552"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.0049 -0.0171 1.6146 -0.7447 -0.0694 1.1760"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0049 -0.4566 0.9839 1.0047 -0.4735 1.4377"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4480 -0.1417 1.7567 -0.3078 0.6402 1.4938"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0518 0.2327 0.5678 0.9084 0.2354 0.6416"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5342 0.3108 0.7906 0.7486 0.3096 0.4684"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4660 0.6749 0.3167 -0.3423 0.6422 0.0200"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.3700 0.3775 0.7457 0.5179 0.3900 1.1512"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0553 -0.2809 0.9745 0.0119 -0.2446 1.5870"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.3078 0.6402 1.4938 0.0291 0.5442 0.7106"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4660 0.6749 0.3167 -0.2412 0.6246 0.3199"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.2870 0.0460 1.2052 -0.7447 -0.0694 1.1760"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5253 -0.3954 0.5876 0.3700 0.3775 0.7457"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6681 -0.0925 1.6548 -1.0049 -0.0171 1.6146"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.6811 0.3082 1.5169 0.8321 0.2787 1.0839"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.4130 0.4280 1.6126 0.0613 0.5575 1.6552"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4480 -0.1417 1.7567 -0.3051 -0.1560 1.1404"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.3423 0.6422 0.0200 -0.2412 0.6246 0.3199"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5253 -0.3954 0.5876 0.5342 0.3108 0.7906"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.4214 -0.5569 0.0369 0.2318 -0.4240 0.3025"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0610 -0.2916 0.5295 0.0291 0.5442 0.7106"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5253 -0.3954 0.5876 0.4441 -0.4351 0.4109"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.0049 -0.0171 1.6146 -1.1930 0.0250 1.4781"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4480 -0.1417 1.7567 0.0119 -0.2446 1.5870"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.8376 -0.6230 0.2919 -0.9437 -0.5906 0.3226"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.0770 -0.2078 0.7020 -0.9218 -0.4801 0.6151"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6620 0.7266 0.8731 -0.4660 0.6749 0.3167"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0049 -0.4566 0.9839 0.0553 -0.2809 0.9745"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.1930 0.0250 1.4781 -1.2870 0.0460 1.2052"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.9399 0.2842 0.2137 0.7486 0.3096 0.4684"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0049 -0.4566 0.9839 0.8321 0.2787 1.0839"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5342 0.3108 0.7906 0.9254 0.2610 0.8806"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0610 -0.2916 0.5295 -0.1523 -0.2351 0.5425"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6851 -0.6166 0.4872 -0.7187 -0.2993 0.7539"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.2318 -0.4240 0.3025 0.3922 -0.4564 0.2607"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.1351 0.5839 0.2812 -0.1213 0.5784 0.0328"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.1523 -0.2351 0.5425 -0.3576 0.6463 0.8016"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.2870 0.0460 1.2052 -1.0770 -0.2078 0.7020"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0049 -0.4566 0.9839 0.5342 0.3108 0.7906"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.1407 -0.4957 0.3569 -0.9218 -0.4801 0.6151"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.1898 0.4473 0.7166 0.0448 0.5507 1.1702"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.9399 0.2842 0.2137 0.9080 0.2762 0.4239"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.4480 -0.1417 1.7567 -0.6681 -0.0925 1.6548"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.9247 -0.0320 0.9203 -0.7187 -0.2993 0.7539"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5253 -0.3954 0.5876 0.5763 -0.4993 0.3232"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0047 -0.4735 1.4377 0.6429 -0.2941 1.7712"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0291 0.5442 0.7106 -0.3576 0.6463 0.8016"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.8321 0.2787 1.0839 0.5342 0.3108 0.7906"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.0553 -0.2809 0.9745 -0.1523 -0.2351 0.5425"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0518 0.2327 0.5678 0.9080 0.2762 0.4239"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6681 -0.0925 1.6548 -0.3078 0.6402 1.4938"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-1.1407 -0.4957 0.3569 -0.9437 -0.5906 0.3226"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.7447 -0.0694 1.1760 -0.4299 -0.2475 0.6016"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.1898 0.4473 0.7166 0.5179 0.3900 1.1512"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.3051 -0.1560 1.1404 0.0119 -0.2446 1.5870"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.8376 -0.6230 0.2919 -1.0201 -0.6851 0.0348"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.2144 0.1981 0.2862 0.9399 0.2842 0.2137"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="0.5763 -0.4993 0.3232 0.4214 -0.5569 0.0369"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.3051 -0.1560 1.1404 -0.1523 -0.2351 0.5425"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="1.0049 -0.4566 0.9839 0.7656 -0.4610 0.6884"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+      <geom type="capsule" fromto="-0.6681 -0.0925 1.6548 -0.3051 -0.1560 1.1404"
+            size="0.007" rgba="0.4 0.6 0.9 0.35" contype="0" conaffinity="0"/>
+
+      <!-- Sites at each vertex (for muscle tendons) -->
+      <site name="s0" pos="-0.4480 -0.1417 1.7567" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s1" pos="-0.6681 -0.0925 1.6548" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s2" pos="-1.0049 -0.0171 1.6146" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s3" pos="-1.1930 0.0250 1.4781" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s4" pos="-1.2870 0.0460 1.2052" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s5" pos="-1.0770 -0.2078 0.7020" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s6" pos="1.0049 -0.4566 0.9839" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s7" pos="0.6768 -0.6140 0.0633" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s8" pos="1.0047 -0.4735 1.4377" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s9" pos="0.7656 -0.4610 0.6884" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s10" pos="0.5253 -0.3954 0.5876" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s11" pos="0.5763 -0.4993 0.3232" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s12" pos="0.4214 -0.5569 0.0369" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s13" pos="-1.1407 -0.4957 0.3569" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s14" pos="0.2318 -0.4240 0.3025" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s15" pos="0.0610 -0.2916 0.5295" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s16" pos="-0.6851 -0.6166 0.4872" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s17" pos="-0.8376 -0.6230 0.2919" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s18" pos="-0.8239 -0.7290 0.0301" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s19" pos="-1.0201 -0.6851 0.0348" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s20" pos="0.4869 -0.3509 1.4118" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s21" pos="0.0553 -0.2809 0.9745" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s22" pos="-0.3051 -0.1560 1.1404" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s23" pos="0.6429 -0.2941 1.7712" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s24" pos="0.0119 -0.2446 1.5870" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s25" pos="0.0520 -0.2315 1.9239" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s26" pos="-0.7447 -0.0694 1.1760" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s27" pos="0.6811 0.3082 1.5169" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s28" pos="0.4130 0.4280 1.6126" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s29" pos="0.0613 0.5575 1.6552" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s30" pos="0.8321 0.2787 1.0839" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s31" pos="0.8899 0.2542 1.3166" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s32" pos="0.5342 0.3108 0.7906" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s33" pos="0.1898 0.4473 0.7166" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s34" pos="1.2144 0.1981 0.2862" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s35" pos="0.9399 0.2842 0.2137" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s36" pos="0.7486 0.3096 0.4684" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s37" pos="1.0518 0.2327 0.5678" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s38" pos="-0.3078 0.6402 1.4938" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s39" pos="-0.6532 0.7516 1.2645" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s40" pos="0.0291 0.5442 0.7106" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s41" pos="-0.6620 0.7266 0.8731" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s42" pos="-0.1351 0.5839 0.2812" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s43" pos="-0.4660 0.6749 0.3167" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s44" pos="-0.1213 0.5784 0.0328" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s45" pos="-0.3423 0.6422 0.0200" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s46" pos="-0.4299 -0.2475 0.6016" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s47" pos="-0.9218 -0.4801 0.6151" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s48" pos="-0.9247 -0.0320 0.9203" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s49" pos="-0.9437 -0.5906 0.3226" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s50" pos="-0.7187 -0.2993 0.7539" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s51" pos="-0.1523 -0.2351 0.5425" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s52" pos="0.3922 -0.4564 0.2607" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s53" pos="0.4441 -0.4351 0.4109" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s54" pos="-0.2412 0.6246 0.3199" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s55" pos="-0.3576 0.6463 0.8016" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s56" pos="0.9080 0.2762 0.4239" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s57" pos="0.9084 0.2354 0.6416" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s58" pos="0.9254 0.2610 0.8806" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s59" pos="0.0448 0.5507 1.1702" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s60" pos="0.3700 0.3775 0.7457" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+      <site name="s61" pos="0.5179 0.3900 1.1512" size="0.012"
+            rgba="1 0.3 0.3 0.9"/>
+    </body>
+  </worldbody>
+
+  <tendon>
+    <spatial name="muscle0" range="0 0.4039">
+      <site site="s10"/>
+      <site site="s11"/>
+    </spatial>
+    <spatial name="muscle1" range="0 0.5265">
+      <site site="s5"/>
+      <site site="s13"/>
+    </spatial>
+    <spatial name="muscle2" range="0 0.4895">
+      <site site="s12"/>
+      <site site="s14"/>
+    </spatial>
+    <spatial name="muscle3" range="0 0.3717">
+      <site site="s16"/>
+      <site site="s17"/>
+    </spatial>
+    <spatial name="muscle4" range="0 0.2379">
+      <site site="s53"/>
+      <site site="s11"/>
+    </spatial>
+    <spatial name="muscle5" range="0 0.2486">
+      <site site="s52"/>
+      <site site="s14"/>
+    </spatial>
+    <spatial name="muscle6" range="0 0.6676">
+      <site site="s21"/>
+      <site site="s15"/>
+    </spatial>
+    <spatial name="muscle7" range="0 0.2667">
+      <site site="s47"/>
+      <site site="s5"/>
+    </spatial>
+    <spatial name="muscle8" range="0 0.2738">
+      <site site="s60"/>
+      <site site="s33"/>
+    </spatial>
+    <spatial name="muscle9" range="0 0.4778">
+      <site site="s36"/>
+      <site site="s35"/>
+    </spatial>
+    <spatial name="muscle10" range="0 0.2420">
+      <site site="s57"/>
+      <site site="s37"/>
+    </spatial>
+    <spatial name="muscle11" range="0 0.4690">
+      <site site="s55"/>
+      <site site="s41"/>
+    </spatial>
+    <spatial name="muscle12" range="0 0.2411">
+      <site site="s33"/>
+      <site site="s40"/>
+    </spatial>
+    <spatial name="muscle13" range="0 0.8850">
+      <site site="s43"/>
+      <site site="s41"/>
+    </spatial>
+    <spatial name="muscle14" range="0 0.6897">
+      <site site="s40"/>
+      <site site="s42"/>
+    </spatial>
+    <spatial name="muscle15" range="0 0.4258">
+      <site site="s51"/>
+      <site site="s46"/>
+    </spatial>
+    <spatial name="muscle16" range="0 0.5078">
+      <site site="s13"/>
+      <site site="s47"/>
+    </spatial>
+    <spatial name="muscle17" range="0 0.1657">
+      <site site="s49"/>
+      <site site="s17"/>
+    </spatial>
+    <spatial name="muscle18" range="0 0.4599">
+      <site site="s16"/>
+      <site site="s49"/>
+    </spatial>
+    <spatial name="muscle19" range="0 0.6343">
+      <site site="s50"/>
+      <site site="s26"/>
+    </spatial>
+    <spatial name="muscle20" range="0 0.9825">
+      <site site="s26"/>
+      <site site="s46"/>
+    </spatial>
+    <spatial name="muscle21" range="0 0.4897">
+      <site site="s46"/>
+      <site site="s50"/>
+    </spatial>
+    <spatial name="muscle22" range="0 0.3205">
+      <site site="s15"/>
+      <site site="s51"/>
+    </spatial>
+    <spatial name="muscle23" range="0 0.7190">
+      <site site="s51"/>
+      <site site="s21"/>
+    </spatial>
+    <spatial name="muscle24" range="0 0.3385">
+      <site site="s12"/>
+      <site site="s52"/>
+    </spatial>
+    <spatial name="muscle25" range="0 0.2917">
+      <site site="s53"/>
+      <site site="s10"/>
+    </spatial>
+    <spatial name="muscle26" range="0 0.1694">
+      <site site="s42"/>
+      <site site="s54"/>
+    </spatial>
+    <spatial name="muscle27" range="0 0.7127">
+      <site site="s40"/>
+      <site site="s54"/>
+    </spatial>
+    <spatial name="muscle28" range="0 0.7453">
+      <site site="s55"/>
+      <site site="s43"/>
+    </spatial>
+    <spatial name="muscle29" range="0 0.2484">
+      <site site="s36"/>
+      <site site="s56"/>
+    </spatial>
+    <spatial name="muscle30" range="0 0.3189">
+      <site site="s56"/>
+      <site site="s35"/>
+    </spatial>
+    <spatial name="muscle31" range="0 0.5061">
+      <site site="s37"/>
+      <site site="s58"/>
+    </spatial>
+    <spatial name="muscle32" range="0 0.3594">
+      <site site="s58"/>
+      <site site="s57"/>
+    </spatial>
+    <spatial name="muscle33" range="0 0.6898">
+      <site site="s40"/>
+      <site site="s59"/>
+    </spatial>
+    <spatial name="muscle34" range="0 0.7143">
+      <site site="s59"/>
+      <site site="s33"/>
+    </spatial>
+    <spatial name="muscle35" range="0 0.2553">
+      <site site="s32"/>
+      <site site="s60"/>
+    </spatial>
+    <spatial name="muscle36" range="0 0.5414">
+      <site site="s32"/>
+      <site site="s61"/>
+    </spatial>
+    <spatial name="muscle37" range="0 0.6474">
+      <site site="s61"/>
+      <site site="s60"/>
+    </spatial>
+  </tendon>
+
+  <actuator>
+    <motor name="m0" tendon="muscle0" gear="80"/>
+    <motor name="m1" tendon="muscle1" gear="80"/>
+    <motor name="m2" tendon="muscle2" gear="80"/>
+    <motor name="m3" tendon="muscle3" gear="80"/>
+    <motor name="m4" tendon="muscle4" gear="80"/>
+    <motor name="m5" tendon="muscle5" gear="80"/>
+    <motor name="m6" tendon="muscle6" gear="80"/>
+    <motor name="m7" tendon="muscle7" gear="80"/>
+    <motor name="m8" tendon="muscle8" gear="80"/>
+    <motor name="m9" tendon="muscle9" gear="80"/>
+    <motor name="m10" tendon="muscle10" gear="80"/>
+    <motor name="m11" tendon="muscle11" gear="80"/>
+    <motor name="m12" tendon="muscle12" gear="80"/>
+    <motor name="m13" tendon="muscle13" gear="80"/>
+    <motor name="m14" tendon="muscle14" gear="80"/>
+    <motor name="m15" tendon="muscle15" gear="80"/>
+    <motor name="m16" tendon="muscle16" gear="80"/>
+    <motor name="m17" tendon="muscle17" gear="80"/>
+    <motor name="m18" tendon="muscle18" gear="80"/>
+    <motor name="m19" tendon="muscle19" gear="80"/>
+    <motor name="m20" tendon="muscle20" gear="80"/>
+    <motor name="m21" tendon="muscle21" gear="80"/>
+    <motor name="m22" tendon="muscle22" gear="80"/>
+    <motor name="m23" tendon="muscle23" gear="80"/>
+    <motor name="m24" tendon="muscle24" gear="80"/>
+    <motor name="m25" tendon="muscle25" gear="80"/>
+    <motor name="m26" tendon="muscle26" gear="80"/>
+    <motor name="m27" tendon="muscle27" gear="80"/>
+    <motor name="m28" tendon="muscle28" gear="80"/>
+    <motor name="m29" tendon="muscle29" gear="80"/>
+    <motor name="m30" tendon="muscle30" gear="80"/>
+    <motor name="m31" tendon="muscle31" gear="80"/>
+    <motor name="m32" tendon="muscle32" gear="80"/>
+    <motor name="m33" tendon="muscle33" gear="80"/>
+    <motor name="m34" tendon="muscle34" gear="80"/>
+    <motor name="m35" tendon="muscle35" gear="80"/>
+    <motor name="m36" tendon="muscle36" gear="80"/>
+    <motor name="m37" tendon="muscle37" gear="80"/>
+  </actuator>
+
+  <sensor>
+    <framelinvel name="body_linvel" objtype="body" objname="quadruped"/>
+    <frameangvel name="body_angvel" objtype="body" objname="quadruped"/>
+    <framequat   name="body_quat"   objtype="body" objname="quadruped"/>
+  </sensor>
+
+</mujoco>

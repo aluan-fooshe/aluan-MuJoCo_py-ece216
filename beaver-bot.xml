@@ -1,0 +1,53 @@
+<mujoco model="beaverbot">
+  <option gravity="0 0 -9.81"/>
+
+  <worldbody>
+    <geom name="floor" type="plane" size="5 5 0.1" rgba="0.5 0.3 0.1 1"/>
+
+    <body name="torso" pos="0 0 0.3">
+      <joint name="root_x" type="slide" axis="1 0 0"/>
+      <joint name="root_z" type="slide" axis="0 0 1"/>
+      <joint name="root_rot" type="hinge" axis="0 1 0"/>
+      <geom type="capsule" size="0.1 0.2" rgba="0.6 0.4 0.1 1"/>
+
+      <body name="head" pos="0.25 0 0.05">
+        <geom type="sphere" size="0.1" rgba="0.6 0.4 0.1 1"/>
+        <geom type="box" size="0.03 0.02 0.04" pos="0.09 0 -0.05" rgba="1 1 0.8 1"/>
+      </body>
+
+      <body name="tail" pos="-0.25 0 0">
+        <joint name="tail_joint" type="hinge" axis="0 1 0" range="-45 45"/>
+        <geom type="box" size="0.15 0.07 0.02" rgba="0.4 0.2 0.05 1"/>
+      </body>
+
+      <body name="fl_leg" pos="0.15 0.12 -0.15">
+        <joint name="fl_hip" type="hinge" axis="0 1 0" range="-45 45"/>
+        <geom type="capsule" size="0.03 0.08" rgba="0.5 0.3 0.1 1"/>
+      </body>
+
+      <body name="fr_leg" pos="0.15 -0.12 -0.15">
+        <joint name="fr_hip" type="hinge" axis="0 1 0" range="-45 45"/>
+        <geom type="capsule" size="0.03 0.08" rgba="0.5 0.3 0.1 1"/>
+      </body>
+
+      <body name="bl_leg" pos="-0.15 0.12 -0.15">
+        <joint name="bl_hip" type="hinge" axis="0 1 0" range="-45 45"/>
+        <geom type="capsule" size="0.03 0.08" rgba="0.5 0.3 0.1 1"/>
+      </body>
+
+      <body name="br_leg" pos="-0.15 -0.12 -0.15">
+        <joint name="br_hip" type="hinge" axis="0 1 0" range="-45 45"/>
+        <geom type="capsule" size="0.03 0.08" rgba="0.5 0.3 0.1 1"/>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="fl_motor" joint="fl_hip" gear="50"/>
+    <motor name="fr_motor" joint="fr_hip" gear="50"/>
+    <motor name="bl_motor" joint="bl_hip" gear="50"/>
+    <motor name="br_motor" joint="br_hip" gear="50"/>
+    <motor name="tail_motor" joint="tail_joint" gear="20"/>
+  </actuator>
+
+</mujoco>

@@ -1,0 +1,518 @@
+<!--
+  ============================================================
+  RIGHT LEG — MuJoCo XML (extracted from humanoid.xml)
+  ============================================================
+  This file contains only the right leg of the humanoid,
+  from the pelvis down to the foot, plus the minimal spine
+  needed to anchor it to a free-floating torso.
+
+  BODY CHAIN (parent → child):
+    torso → waist_lower → pelvis → thigh_right
+      → shin_right → foot_right
+
+  Each body's position (pos="x y z") is RELATIVE to its
+  parent. The world origin (0 0 0) is the floor center.
+  Z = up/down.  Y = left/right.  X = forward/back.
+  ============================================================
+-->
+
+<mujoco model="right_leg_only">
+
+  <!-- ======================================================
+    SIMULATION OPTIONS
+    timestep: how many seconds pass per physics step.
+    0.005 = 5 milliseconds per step — a common balance
+    between accuracy and speed for humanoid-scale models.
+  ======================================================= -->
+  <option timestep="0.005"/>
+
+
+  <!-- ======================================================
+    ASSETS — textures and materials used for rendering
+    These are purely visual; they do not affect physics.
+  ======================================================= -->
+  <asset>
+    <!-- Skybox: gradient from blue-grey at top to black at bottom -->
+    <texture type="skybox" builtin="gradient"
+             rgb1=".3 .5 .7" rgb2="0 0 0"
+             width="32" height="512"/>
+
+    <!-- Skin texture: a flat tan colour with a white cross mark
+         type="cube" means it wraps around 3D shapes in all 6 directions -->
+    <texture name="body" type="cube" builtin="flat" mark="cross"
+             width="128" height="128"
+             rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4"
+             markrgb="1 1 1"/>
+
+    <!-- Material that applies the skin texture.
+         texuniform="true" = stretch the texture to fit evenly.
+         rgba=  overall tint on top of the texture. -->
+    <material name="body" texture="body" texuniform="true"
+              rgba="0.8 0.6 .4 1"/>
+
+    <!-- Checkerboard floor texture -->
+    <texture name="grid" type="2d" builtin="checker"
+             width="512" height="512"
+             rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid"
+              texrepeat="1 1" texuniform="true" reflectance=".2"/>
+  </asset>
+
+
+  <!-- ======================================================
+    DEFAULTS — shared property templates
+    Instead of repeating the same attributes on every geom
+    or joint, you define them once here and reference them
+    with class="...". Think of these as CSS classes for
+    physics objects.
+
+    Defaults cascade: a child <default> inherits everything
+    from its parent, then overrides only what it specifies.
+  ======================================================= -->
+  <default>
+
+    <!-- All motors are clamped to the range [-1, 1].
+         The actual torque is gear * control_signal. -->
+    <motor ctrlrange="-1 1" ctrllimited="true"/>
+
+    <!-- ── "body" class: base settings for ALL body geoms ── -->
+    <default class="body">
+
+      <!-- Every geom in the body class is a capsule by default.
+           condim="1" = only normal-direction contact forces (no friction
+           between body parts — just with the floor).
+           friction=".7" = friction coefficient with other surfaces.
+           solimp / solref = contact softness parameters (how hard/springy
+           collisions feel). material="body" = use the skin texture. -->
+      <geom type="capsule" condim="1" friction=".7"
+            solimp=".9 .99 .003" solref=".015 1"
+            material="body" group="1"/>
+
+      <!-- ── Thigh geom defaults ── -->
+      <!-- size here = capsule radius = 6cm. No fromto here because the
+           thigh capsule endpoints are defined directly on the geom tag. -->
+      <default class="thigh">
+        <geom size=".06"/>
+      </default>
+
+      <!-- ── Shin geom defaults ── -->
+      <!-- fromto="0 0 0  0 0 -.3" draws the capsule from the shin body's
+           local origin straight down 30cm along Z.
+           size=".049" = radius ~5cm (slightly thinner than the thigh). -->
+      <default class="shin">
+        <geom fromto="0 0 0  0 0 -.3" size=".049"/>
+      </default>
+
+      <!-- ── Foot geom defaults ── -->
+      <!-- The foot is two overlapping capsules (foot1 and foot2) that
+           together form a wide, flat sole shape.
+           size=".027" = 2.7cm radius (thin/flat).
+           foot1 goes from back-left to front-left.
+           foot2 goes from back-right to front-right.
+           Together they splay outward slightly, forming a sole. -->
+      <default class="foot">
+        <geom size=".027"/>
+        <default class="foot1">
+          <!-- fromto: start at x=-.07 (behind), end at x=+.14 (ahead)
+               y offsets -.01 / -.03 tilt the capsule inward (medial side) -->
+          <geom fromto="-.07 -.01 0  .14 -.03 0"/>
+        </default>
+        <default class="foot2">
+          <!-- Mirror of foot1 on the other (lateral) side.
+               y offsets +.01 / +.03 tilt outward. -->
+          <geom fromto="-.07 .01 0  .14 .03 0"/>
+        </default>
+      </default>
+
+      <!-- ── Base joint defaults (applies to ALL joints in class="body") ──
+           type="hinge" = a single-axis rotary joint (like a real joint).
+           damping=".2"  = small resistance to motion — prevents jittering.
+           stiffness="1" = weak spring pulling back to rest position.
+           armature=".01"= adds tiny virtual inertia to the joint — improves
+                           numerical stability of the physics solver.
+           limited="true"= enforce the range= angle limits.
+           solimplimit    = softness of the limit stop (how bouncy the end-stop is). -->
+      <joint type="hinge" damping=".2" stiffness="1" armature=".01"
+             limited="true" solimplimit="0 .99 .01"/>
+
+      <!-- ── "joint_big" class: high-torque joints (hips, spine) ── -->
+      <!-- Overrides damping and stiffness to be much stronger.
+           These joints carry the body weight and need more resistance. -->
+      <default class="joint_big">
+        <joint damping="5" stiffness="10"/>
+
+        <!-- hip_x: side-to-side leg abduction (spreading legs apart).
+             range="-30 10" limits abduction to 30° outward, 10° inward. -->
+        <default class="hip_x">
+          <joint range="-30 10"/>
+        </default>
+
+        <!-- hip_z: internal/external rotation (twisting the whole leg).
+             range="-60 35" allows more external than internal rotation. -->
+        <default class="hip_z">
+          <joint range="-60 35"/>
+        </default>
+
+        <!-- hip_y: forward/backward leg swing (flexion/extension).
+             axis="0 1 0" = rotates around Y axis (the natural swing plane).
+             range="-150 20" allows large forward kick, small backward extension. -->
+        <default class="hip_y">
+          <joint axis="0 1 0" range="-150 20"/>
+        </default>
+
+        <!-- joint_big_stiff: even stiffer version for the spine -->
+        <default class="joint_big_stiff">
+          <joint stiffness="20"/>
+        </default>
+      </default>
+
+      <!-- ── Knee defaults ──
+           pos="0 0 .02" — pivot is 2cm above the shin body's origin.
+           axis="0 -1 0" — rotates around negative Y = knee bends forward.
+           range="-160 2" — can bend up to 160° (deep squat), but only 2°
+                            of hyperextension (knee can't bend backward). -->
+      <default class="knee">
+        <joint pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
+      </default>
+
+      <!-- ── Ankle defaults ── -->
+      <default class="ankle">
+        <joint range="-50 50"/>
+
+        <!-- ankle_y: plantarflexion / dorsiflexion (pointing toes / flexing up).
+             pos="0 0 .08" = pivot 8cm above foot body origin (at the ankle bone).
+             axis="0 1 0"  = Y axis, same direction as knee.
+             stiffness="6" = moderately stiff — foot naturally returns to flat. -->
+        <default class="ankle_y">
+          <joint pos="0 0 .08" axis="0 1 0" stiffness="6"/>
+        </default>
+
+        <!-- ankle_x: inversion / eversion (rolling the foot side to side).
+             pos="0 0 .04" = pivot 4cm above foot origin (below ankle_y pivot).
+             stiffness="3" = less stiff than ankle_y — side roll is more free. -->
+        <default class="ankle_x">
+          <joint pos="0 0 .04" stiffness="3"/>
+        </default>
+      </default>
+
+    </default><!-- end class="body" -->
+  </default>
+
+
+  <!-- ======================================================
+    WORLDBODY — the physical scene
+    Everything that exists in the simulation lives here.
+    Bodies are nested: child pos/orientation is always
+    relative to the immediate parent body.
+  ======================================================= -->
+  <worldbody>
+
+    <!-- ── FLOOR ──
+         type="plane" = infinite flat surface.
+         size="0 0 .05" — for planes, only the 3rd number matters:
+           it sets the visual tile half-thickness (5cm).
+         condim="3" = full 3D friction (unlike body-on-body which is condim=1).
+         This lets the foot grip the floor realistically. -->
+    <geom name="floor" size="0 0 .05" type="plane"
+          material="grid" condim="3"/>
+
+    <!-- ── LIGHTS ──
+         Two lights so the leg is well-lit from any angle. -->
+
+    <!-- Spotlight: tracks the torso's centre of mass, aimed from the side. -->
+    <light name="spotlight" mode="targetbodycom" target="torso"
+           diffuse=".8 .8 .8" specular="0.3 0.3 0.3"
+           pos="0 -6 4" cutoff="30"/>
+
+    <!-- Top fill light: follows the torso's centre of mass from above. -->
+    <light name="top" pos="0 0 2" mode="trackcom"/>
+
+
+    <!-- ══════════════════════════════════════════════════════
+      TORSO  (root body)
+      pos="0 0 1.282" places the torso ~1.28m above the floor.
+      The exact height accounts for the full leg length below
+      it so the foot just touches the floor at rest.
+      childclass="body" means all descendants use the "body"
+      default class unless they specify their own.
+    ══════════════════════════════════════════════════════ -->
+    <body name="torso" pos="0 0 1.282" childclass="body">
+
+      <!-- Camera that follows behind the model -->
+      <camera name="back" pos="-3 0 1" xyaxes="0 -1 0 1 0 2" mode="trackcom"/>
+
+      <!-- freejoint: gives the torso 6 degrees of freedom —
+           it can translate (x y z) and rotate (roll pitch yaw) freely.
+           Without this, the entire body would be frozen in space.
+           This is the "root" joint of the whole skeleton. -->
+      <freejoint name="root"/>
+
+      <!-- Torso capsule: horizontal bar across the chest.
+           fromto="0 -.07 0  0 .07 0" = 14cm wide, centred on the body,
+           lying along the Y axis (left-right).
+           size=".07" = 7cm radius — a chunky torso. -->
+      <geom name="torso" fromto="0 -.07 0  0 .07 0" size=".07"/>
+
+      <!-- Upper waist capsule: same shape, shifted 12cm down (z=-.12).
+           Slightly smaller (size=".06") to taper the waist. -->
+      <geom name="waist_upper" fromto="-.01 -.06 -.12  -.01 .06 -.12" size=".06"/>
+
+
+      <!-- ══════════════════════════════════════════════════════
+        WAIST_LOWER  (lower spine / lumbar region)
+        pos="-.01 0 -.26" — 26cm below the torso, 1cm forward on X
+        (slight forward lean of the spine, anatomically correct).
+
+        This body has TWO joints BEFORE the child bodies.
+        In MuJoCo, joints listed on a body define how THAT body
+        moves relative to its parent. So these two joints define
+        how the lumbar spine bends.
+      ══════════════════════════════════════════════════════ -->
+      <body name="waist_lower" pos="-.01 0 -.26">
+
+        <!-- Lower waist capsule — same shape as upper waist. -->
+        <geom name="waist_lower" fromto="0 -.06 0  0 .06 0" size=".06"/>
+
+        <!-- Spinal joint 1: rotation around Z axis (twisting left/right).
+             pos="0 0 .065" — pivot is 6.5cm above this body's origin
+             (placing it between upper and lower waist geoms).
+             axis="0 0 1" = Z axis = vertical twist.
+             range="-45 45" = 45° either direction.
+             class="joint_big_stiff" = very stiff, resists twisting. -->
+        <joint name="abdomen_z" pos="0 0 .065" axis="0 0 1"
+               range="-45 45" class="joint_big_stiff"/>
+
+        <!-- Spinal joint 2: rotation around Y axis (bending forward/back).
+             Same pivot position as abdomen_z.
+             axis="0 1 0" = Y axis = forward/backward lean.
+             range="-75 30" = can hunch forward 75°, lean back 30°. -->
+        <joint name="abdomen_y" pos="0 0 .065" axis="0 1 0"
+               range="-75 30" class="joint_big"/>
+
+
+        <!-- ══════════════════════════════════════════════════════
+          PELVIS
+          pos="0 0 -.165" — 16.5cm below waist_lower.
+          Has its own joint (abdomen_x) for side-to-side hip sway.
+          Also has the butt geom and is the parent of the thigh.
+        ══════════════════════════════════════════════════════ -->
+        <body name="pelvis" pos="0 0 -.165">
+
+          <!-- Spinal joint 3: rotation around X axis (lateral pelvic tilt —
+               think of tilting one hip up and the other down).
+               pos="0 0 .1" = pivot 10cm above pelvis origin (at the waist).
+               axis="1 0 0" = X axis = side tilt.
+               range="-35 35" = moderate range, pelvis doesn't tilt much. -->
+          <joint name="abdomen_x" pos="0 0 .1" axis="1 0 0"
+                 range="-35 35" class="joint_big"/>
+
+          <!-- Butt / pelvis geom: wide horizontal capsule.
+               fromto="-.02 -.07 0  -.02 .07 0" = 14cm wide, 2cm behind centre.
+               size=".09" = 9cm radius — the widest geom in the leg chain.
+               The slight X offset (-.02) gives a realistic posterior shape. -->
+          <geom name="butt" fromto="-.02 -.07 0  -.02 .07 0" size=".09"/>
+
+
+          <!-- ════════════════════════════════════════════════
+            THIGH_RIGHT
+            pos="0 -.1 -.04" — 10cm to the right (negative Y) and
+            4cm below the pelvis origin. This is the hip socket position.
+
+            This body has THREE joints — the hip has 3 degrees
+            of freedom (it's a ball-and-socket joint), modelled
+            here as three stacked hinge joints on different axes.
+            Each one handles a separate plane of motion.
+          ════════════════════════════════════════════════ -->
+          <body name="thigh_right" pos="0 -.1 -.04">
+
+            <!-- Hip joint 1 — abduction / adduction (leg spreading).
+                 axis="1 0 0" = X axis = moves leg left/right relative to torso.
+                 class="hip_x" → range="-30 10" (from defaults above).
+                 Positive = adduction (leg crossing midline), negative = abduction. -->
+            <joint name="hip_x_right" axis="1 0 0" class="hip_x"/>
+
+            <!-- Hip joint 2 — internal / external rotation (leg twisting).
+                 axis="0 0 1" = Z axis = rotates the whole leg like a screw.
+                 class="hip_z" → range="-60 35".
+                 Negative = external rotation (toes out), positive = internal. -->
+            <joint name="hip_z_right" axis="0 0 1" class="hip_z"/>
+
+            <!-- Hip joint 3 — flexion / extension (leg swinging forward/back).
+                 class="hip_y" → axis="0 1 0", range="-150 20" (from defaults).
+                 This is the primary walking motion joint.
+                 Large forward range (-150°) allows lifting the knee to the chest.
+                 Small backward range (20°) is the hip extension at push-off. -->
+            <joint name="hip_y_right" class="hip_y"/>
+
+            <!-- Thigh capsule: angled slightly outward at the bottom.
+                 fromto="0 0 0  0 .01 -.34" — starts at hip socket,
+                 ends 34cm down and 1cm to the right (Y+.01).
+                 The tiny Y offset creates a natural valgus (knock-kneed) angle.
+                 class="thigh" → size=".06" (6cm radius). -->
+            <geom name="thigh_right" fromto="0 0 0  0 .01 -.34" class="thigh"/>
+
+
+            <!-- ════════════════════════════════════════════════
+              SHIN_RIGHT
+              pos="0 .01 -.4" — 40cm below the thigh body origin,
+              matching the thigh geom's lower endpoint (-.34) plus
+              some overlap. The .01 Y offset keeps it aligned with
+              the thigh's angled bottom end.
+            ════════════════════════════════════════════════ -->
+            <body name="shin_right" pos="0 .01 -.4">
+
+              <!-- Knee joint: single-axis hinge — the simplest major joint.
+                   class="knee" → pos="0 0 .02", axis="0 -1 0", range="-160 2".
+                   axis="0 -1 0" = negative Y — this makes the knee bend
+                   in the anatomically correct forward direction.
+                   The pivot (pos="0 0 .02") is 2cm above the shin body's
+                   origin, placing it at the centre of the knee capsule. -->
+              <joint name="knee_right" class="knee"/>
+
+              <!-- Shin capsule: straight down 30cm.
+                   class="shin" → fromto="0 0 0  0 0 -.3", size=".049".
+                   Perfectly vertical — no angle here, the shin is straight. -->
+              <geom name="shin_right" class="shin"/>
+
+
+              <!-- ════════════════════════════════════════════════
+                FOOT_RIGHT
+                pos="0 0 -.39" — 39cm below the shin body origin.
+                This places the foot below the shin geom's endpoint
+                (which ended at z=-.3 relative to shin), giving
+                a small overlap that looks anatomically continuous.
+              ════════════════════════════════════════════════ -->
+              <body name="foot_right" pos="0 0 -.39">
+
+                <!-- Ankle joint 1 — plantarflexion / dorsiflexion
+                     (pointing toes down / pulling toes up).
+                     class="ankle_y" → pos="0 0 .08", axis="0 1 0",
+                     stiffness="6", range="-50 50".
+                     The pivot at z=.08 is 8cm up from the foot body
+                     origin — right at the ankle bone height.
+                     This is the primary ankle motion used in walking. -->
+                <joint name="ankle_y_right" class="ankle_y"/>
+
+                <!-- Ankle joint 2 — inversion / eversion
+                     (rolling the foot inward / outward — like a sprained ankle).
+                     class="ankle_x" → pos="0 0 .04", stiffness="3",
+                     range="-50 50".
+                     axis="1 0 .5" overrides the default X axis with a
+                     diagonal blend of X and Z — this is specific to the
+                     right foot's geometry to make the motion feel natural.
+                     (The left foot mirrors this with axis="-1 0 -.5".)
+                     The lower pivot (z=.04 vs z=.08) means it rotates
+                     through the subtalar joint, anatomically accurate. -->
+                <joint name="ankle_x_right" class="ankle_x" axis="1 0 .5"/>
+
+                <!-- Foot geom 1 — medial (inner) sole capsule.
+                     class="foot1" → fromto="-.07 -.01 0  .14 -.03 0", size=".027".
+                     Runs from 7cm behind the ankle to 14cm in front,
+                     angled slightly inward (Y goes from -.01 to -.03).
+                     Provides the inner arch of the foot. -->
+                <geom name="foot1_right" class="foot1"/>
+
+                <!-- Foot geom 2 — lateral (outer) sole capsule.
+                     class="foot2" → fromto="-.07 .01 0  .14 .03 0", size=".027".
+                     Mirror of foot1 — runs along the outer edge of the foot.
+                     Together, foot1 + foot2 create a wide, stable sole that
+                     can balance on the floor without tipping. -->
+                <geom name="foot2_right" class="foot2"/>
+
+              </body><!-- end foot_right -->
+            </body><!-- end shin_right -->
+          </body><!-- end thigh_right -->
+        </body><!-- end pelvis -->
+      </body><!-- end waist_lower -->
+    </body><!-- end torso -->
+  </worldbody>
+
+
+  <!-- ======================================================
+    TENDONS — passive constraints linking two joints
+    A tendon forces a relationship between two joints so they
+    can't move fully independently, mimicking a real tendon.
+
+    The hamstring tendon connects the hip and knee:
+    as the hip flexes (raises the thigh), it slightly limits
+    how far the knee can also bend — because the hamstring
+    muscle spans both joints.
+
+    coef=".5" on both joints means the constraint is:
+      0.5 * hip_y_angle + (-0.5) * knee_angle = constant
+    i.e. if the hip bends by 2 units, the knee is pulled
+    taut by 1 unit (50% coupling).
+
+    range="-0.3 2" is the allowed length range of the tendon.
+    Going below -0.3 or above 2 is a hard limit.
+  ======================================================= -->
+  <tendon>
+    <fixed name="hamstring_right" limited="true" range="-0.3 2">
+      <joint joint="hip_y_right"  coef=".5"/>
+      <joint joint="knee_right"   coef="-.5"/>
+    </fixed>
+  </tendon>
+
+
+  <!-- ======================================================
+    ACTUATORS — motors that drive each joint
+    Each motor is attached to one joint. The controller sends
+    a signal in [-1, 1] (from ctrlrange in defaults). The
+    motor multiplies that by "gear" to get the actual torque
+    applied to the joint in Newton-metres.
+
+    gear values reflect the real strength needed at each joint:
+      - hip_y (leg swing): gear=120  — strongest, carries body weight
+      - knee:              gear=80   — strong, extends/flexes under load
+      - hip_x / hip_z:    gear=40   — moderate, lateral / rotational
+      - ankles:            gear=20   — smallest, fine balance adjustments
+      - abdomen joints:    gear=40   — spine stabilisation
+
+    There is one motor per joint degree of freedom. The leg
+    has 8 DoF (3 hip + 1 knee + 2 ankle + 2 spine), so 8 motors.
+  ======================================================= -->
+  <actuator>
+    <!-- Spine motors — stabilise the pelvis over the leg -->
+    <motor name="abdomen_z" gear="40"  joint="abdomen_z"/>
+    <motor name="abdomen_y" gear="40"  joint="abdomen_y"/>
+    <motor name="abdomen_x" gear="40"  joint="abdomen_x"/>
+
+    <!-- Hip motors — three axes of the ball-and-socket hip joint -->
+    <motor name="hip_x_right" gear="40"  joint="hip_x_right"/>  <!-- abduction -->
+    <motor name="hip_z_right" gear="40"  joint="hip_z_right"/>  <!-- rotation   -->
+    <motor name="hip_y_right" gear="120" joint="hip_y_right"/>  <!-- swing       -->
+
+    <!-- Knee motor — single hinge, high torque for stance phase -->
+    <motor name="knee_right"  gear="80"  joint="knee_right"/>
+
+    <!-- Ankle motors — low torque, fine balance control -->
+    <motor name="ankle_y_right" gear="20" joint="ankle_y_right"/> <!-- up/down  -->
+    <motor name="ankle_x_right" gear="20" joint="ankle_x_right"/> <!-- roll     -->
+  </actuator>
+
+
+  <!-- ======================================================
+    KEYFRAME — a saved pose (joint angle snapshot)
+    qpos stores all joint angles in the order MuJoCo assigns
+    them internally:
+      1. freejoint root: 3 position values (x y z)
+                       + 4 quaternion values (orientation)
+      2. abdomen_z, abdomen_y, abdomen_x  (3 spine angles)
+      3. hip_x, hip_z, hip_y             (3 hip angles)
+      4. knee_right                       (1 knee angle)
+      5. ankle_y_right, ankle_x_right    (2 ankle angles)
+
+    The "stand" pose below places the leg straight and
+    upright — all joint angles near zero, foot flat on floor.
+  ======================================================= -->
+  <keyframe>
+    <key name="stand"
+         qpos="0 0 1.282
+               1 0 0 0
+               0 0 0
+               0 0 0 0 0 0"/>
+    <!--      ↑ torso XYZ    ↑ quaternion (no rotation)
+                              ↑ all spine and leg joints at 0° -->
+  </keyframe>
+
+</mujoco>

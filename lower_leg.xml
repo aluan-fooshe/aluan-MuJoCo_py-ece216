@@ -1,0 +1,255 @@
+<!--
+  ============================================================
+  LOWER RIGHT LEG — shin, ankle, foot only
+  ============================================================
+  Body chain:
+    anchor → shin_right → foot_right
+
+  The "anchor" body is a invisible fixed point in space
+  that replaces the thigh/pelvis/torso. It gives the shin
+  something to hang from. Without a parent body, MuJoCo
+  has nothing to attach the knee joint to.
+
+  All positions are still in world-space metres.
+  Z = up.  Y = left/right.  X = forward/back.
+  ============================================================
+-->
+
+<mujoco model="lower_right_leg">
+
+  <option timestep="0.005"/>
+
+  <asset>
+    <!-- Skin texture for the leg geoms -->
+    <texture name="body" type="cube" builtin="flat" mark="cross"
+             width="128" height="128"
+             rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1"/>
+    <material name="body" texture="body" texuniform="true" rgba="0.8 0.6 .4 1"/>
+
+    <!-- Checkerboard floor -->
+    <texture name="grid" type="2d" builtin="checker"
+             width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="1 1" texuniform="true" reflectance=".2"/>
+  </asset>
+
+
+  <!-- ======================================================
+    DEFAULTS
+    Only the three classes we actually use are kept:
+    shin, foot, knee, and ankle. Everything else from the
+    full humanoid file has been removed.
+  ======================================================= -->
+  <default>
+    <motor ctrlrange="-1 1" ctrllimited="true"/>
+
+    <default class="body">
+      <!-- All geoms are capsules with skin material -->
+      <geom type="capsule" condim="1" friction=".7"
+            solimp=".9 .99 .003" solref=".015 1"
+            material="body" group="1"/>
+
+      <!-- All joints are hinges with light damping by default -->
+      <joint type="hinge" damping=".2" stiffness="1" armature=".01"
+             limited="true" solimplimit="0 .99 .01"/>
+
+      <!-- ── Shin ──
+           A straight capsule, 30cm long, pointing straight down (Z).
+           size=".049" = ~5cm radius. -->
+      <default class="shin">
+        <geom fromto="0 0 0  0 0 -.3" size=".049"/>
+      </default>
+
+      <!-- ── Foot ──
+           Two thin capsules that form the sole.
+           Both share size=".027" (2.7cm radius — flat and wide).
+           foot1 = inner (medial) edge of the sole.
+           foot2 = outer (lateral) edge of the sole. -->
+      <default class="foot">
+        <geom size=".027"/>
+        <default class="foot1">
+          <!-- Runs from 7cm behind ankle to 14cm in front,
+               angled slightly inward (Y: -.01 → -.03). -->
+          <geom fromto="-.07 -.01 0  .14 -.03 0"/>
+        </default>
+        <default class="foot2">
+          <!-- Mirror of foot1 on the outer edge (Y: +.01 → +.03). -->
+          <geom fromto="-.07 .01 0  .14 .03 0"/>
+        </default>
+      </default>
+
+      <!-- ── Knee ──
+           pos="0 0 .02"  = pivot is 2cm above the shin body's origin.
+           axis="0 -1 0"  = negative Y axis — knee bends forward.
+           range="-160 2" = bends up to 160°, almost no hyperextension. -->
+      <default class="knee">
+        <joint pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
+      </default>
+
+      <!-- ── Ankle ──
+           Two separate sub-classes for the two ankle axes. -->
+      <default class="ankle">
+        <joint range="-50 50"/>
+
+        <!-- ankle_y: up/down motion (pointing toes / pulling toes up).
+             pos="0 0 .08" = pivot 8cm above foot body origin — at ankle bone.
+             axis="0 1 0"  = Y axis.
+             stiffness="6" = pulls foot back to flat when unloaded. -->
+        <default class="ankle_y">
+          <joint pos="0 0 .08" axis="0 1 0" stiffness="6"/>
+        </default>
+
+        <!-- ankle_x: side-roll (inversion / eversion).
+             pos="0 0 .04" = pivot 4cm up — lower than ankle_y.
+             stiffness="3" = softer, allows more natural roll. -->
+        <default class="ankle_x">
+          <joint pos="0 0 .04" stiffness="3"/>
+        </default>
+      </default>
+
+    </default>
+  </default>
+
+
+  <!-- ======================================================
+    WORLDBODY
+  ======================================================= -->
+  <worldbody>
+
+    <!-- Floor — infinite plane the foot can stand on -->
+    <geom name="floor" size="0 0 .05" type="plane" material="grid" condim="3"/>
+
+    <!-- Simple overhead light -->
+    <light name="top" pos="0 0 3" dir="0 0 -1" diffuse=".9 .9 .9"/>
+
+
+    <!-- ══════════════════════════════════════════════════════
+      ANCHOR BODY
+      pos="0 0 0.79" — places the anchor roughly where the
+      knee would be if the full leg were standing upright:
+        floor (0)
+        + foot body height      (≈ 0.00, foot is at floor level)
+        + shin length           (0.30 m)
+        + shin-to-foot gap      (0.39 m from shin to foot body)
+        + a little for the knee (0.10 m)
+        ≈ 0.79 m
+
+      childclass="body" passes the "body" defaults to all
+      children so we don't have to repeat them.
+
+      The anchor has no joint — it is FIXED in space.
+      It acts like a wall mount the shin hangs from.
+    ══════════════════════════════════════════════════════ -->
+    <body name="anchor" pos="0 0 0.79" childclass="body">
+
+
+      <!-- ════════════════════════════════════════════════
+        SHIN_RIGHT
+        pos="0 .01 0" — 1cm to the right on Y.
+        This matches where the shin sat relative to the thigh
+        in the full file. The .01 offset gives a slight
+        outward lean, matching natural leg geometry.
+
+        The knee joint lives HERE — on the shin body —
+        and defines how the shin moves relative to the anchor.
+      ════════════════════════════════════════════════ -->
+      <body name="shin_right" pos="0 .01 0">
+
+        <!-- Knee hinge joint.
+             class="knee" → axis="0 -1 0", range="-160 2",
+             pivot pos="0 0 .02" (2cm above shin origin).
+             This is the only joint the shin has — it can only
+             flex/extend. No twisting, no side movement. -->
+        <joint name="knee_right" class="knee"/>
+
+        <!-- Shin capsule — straight 30cm rod pointing down.
+             class="shin" → fromto="0 0 0  0 0 -.3", size=".049".
+             The geom starts at the shin body's origin and ends
+             30cm below it along Z. -->
+        <geom name="shin_right" class="shin"/>
+
+
+        <!-- ════════════════════════════════════════════════
+          FOOT_RIGHT
+          pos="0 0 -.39" — 39cm below the shin body origin.
+          Why 39cm if the shin geom only goes 30cm?
+          The extra 9cm is the distance from the bottom of the
+          shin geom to the ankle joint centre — the lower part
+          of the calf before the ankle capsule begins.
+
+          The foot body has TWO joints (ankle_y and ankle_x),
+          stacked on top of each other. Both joints are on the
+          foot body, so they both move the foot relative to
+          the shin. They operate on different axes and at
+          different pivot heights.
+        ════════════════════════════════════════════════ -->
+        <body name="foot_right" pos="0 0 -.39">
+
+          <!-- Ankle joint 1 — plantarflexion / dorsiflexion
+               (toes pointing down vs. foot pulled up).
+               class="ankle_y" → pos="0 0 .08", axis="0 1 0",
+               range="-50 50", stiffness="6".
+               The pivot at z=+.08 from the foot body origin puts
+               the hinge right at ankle bone height. -->
+          <joint name="ankle_y_right" class="ankle_y"/>
+
+          <!-- Ankle joint 2 — inversion / eversion
+               (foot rolling inward / outward).
+               class="ankle_x" → pos="0 0 .04", range="-50 50",
+               stiffness="3".
+               axis="1 0 .5" is a diagonal blend of X and Z —
+               not a pure axis. This tilts the roll plane slightly,
+               which better matches how the real subtalar joint
+               rolls at an angle through the heel bone.
+               The lower pivot (z=.04 vs z=.08) means this joint
+               sits below ankle_y — stacked joints, each at its
+               own anatomical height. -->
+          <joint name="ankle_x_right" class="ankle_x" axis="1 0 .5"/>
+
+          <!-- Foot geom 1 — inner (medial) sole capsule.
+               Lies flat at z=0 (ground level of the foot body).
+               fromto: starts 7cm behind origin, ends 14cm ahead,
+               drifting inward (negative Y direction).
+               Together with foot2, these two capsules form a
+               wide, stable base that won't tip over sideways. -->
+          <geom name="foot1_right" class="foot1"/>
+
+          <!-- Foot geom 2 — outer (lateral) sole capsule.
+               Mirror of foot1. Runs along the outer edge.
+               The slight splay (Y going +.01 → +.03) gives the
+               foot a natural toe-out shape when viewed from above. -->
+          <geom name="foot2_right" class="foot2"/>
+
+        </body><!-- end foot_right -->
+      </body><!-- end shin_right -->
+    </body><!-- end anchor -->
+  </worldbody>
+
+
+  <!-- ======================================================
+    ACTUATORS — one motor per joint degree of freedom.
+    Three joints total: knee, ankle_y, ankle_x.
+
+    gear values:
+      knee    = 80  — strong, must support the hanging lower leg
+      ankle_y = 20  — lighter, fine balance adjustment
+      ankle_x = 20  — lightest, subtle roll correction
+  ======================================================= -->
+  <actuator>
+    <motor name="knee_right"      gear="80" joint="knee_right"/>
+    <motor name="ankle_y_right"   gear="20" joint="ankle_y_right"/>
+    <motor name="ankle_x_right"   gear="20" joint="ankle_x_right"/>
+  </actuator>
+
+
+  <!-- ======================================================
+    KEYFRAME — neutral standing pose.
+    qpos order for this model (no freejoint, so no root pos):
+      knee_right      = 0  (straight)
+      ankle_y_right   = 0  (foot flat)
+      ankle_x_right   = 0  (no roll)
+  ======================================================= -->
+  <keyframe>
+    <key name="stand" qpos="0 0 0"/>
+  </keyframe>
+
+</mujoco>
